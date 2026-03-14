@@ -92,10 +92,11 @@ unsafe_allow_html=True)
 
 # ---------- URL SCANNER ----------
 col1, col2, col3 = st.columns([2,5,2])
+API_URL = "https://nexra-ai-phishing-detection-tool-5.onrender.com/predict"
 
 with col2:
   url = st.text_input("Enter URL to check")
-
+ 
 if st.button("🔎 Scan URL Now"):
 
     if url:
@@ -103,7 +104,7 @@ if st.button("🔎 Scan URL Now"):
         try:
 
             response = requests.post(
-                "http://127.0.0.1:8000/predict",
+              API_URL ,
                 json={"url": url}
             )
 
@@ -116,7 +117,7 @@ if st.button("🔎 Scan URL Now"):
 
             st.write(result)
 
-        except:
+        except requests.exceptions.RequestException:
             st.error("API server not running")
 
     else:
