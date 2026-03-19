@@ -130,8 +130,7 @@ st.write("")
 
 st.markdown("## 📷 Scan QR Code")
 
-QR_API_URL = "http://127.0.0.1:8000/predict_qr"
-
+QR_API_URL = "https://nexra-ai-phishing-detection-tool-5.onrender.com/predict_qr"
 col1, col2, col3 = st.columns([2,5,2])
 
 with col2:
