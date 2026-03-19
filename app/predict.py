@@ -45,7 +45,6 @@ def predict_url(url):
 
     url_length = len(url)
     dot_count = url.count('.')
-    has_at = 1 if '@' in url else 0
     has_https = 1 if 'https' in url else 0
     has_ip = 1 if re.search(r'\d+\.\d+\.\d+\.\d+', url) else 0
     hyphen_count = url.count('-')
@@ -64,17 +63,16 @@ def predict_url(url):
     ]
 
     url_lower = url.lower()
-
     has_suspicious_word = 1 if any(word in url_lower for word in suspicious_words) else 0
 
 
     # ---------- Rule Based Detection ----------
 
-    # Rule 1: @ phishing trick
-    if has_at == 1:
+    # Rule 1: @ phishing trick (ONLY in domain)
+    if "@" in urlparse(url).netloc:
         return {
             "result": "phishing",
-            "reason": "@ symbol trick",
+            "reason": "@ symbol trick in domain",
             "probability": 1.0
         }
 
@@ -121,7 +119,7 @@ def predict_url(url):
         "wikipedia.org"
     ]
 
-    if any(domain.endswith(td) for td in trusted_domains):
+    if domain in trusted_domains or any(domain.endswith("." + td) for td in trusted_domains):
         return {
             "result": "safe",
             "reason": "trusted domain",
@@ -136,7 +134,7 @@ def predict_url(url):
         'url_length': url_length,
         'dot_count': dot_count,
         'subdomain_count': subdomain_count,
-        'has_at': has_at,
+        'has_at': 1 if "@" in urlparse(url).netloc else 0,
         'has_https': has_https,
         'has_ip': has_ip,
         'hyphen_count': hyphen_count,
@@ -148,7 +146,6 @@ def predict_url(url):
         'is_short_domain': is_short_domain
 
     }])
-
 
     # Ensure correct feature order
     features = features[feature_columns]

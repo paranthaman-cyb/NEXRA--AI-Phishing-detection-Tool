@@ -97,7 +97,7 @@ API_URL = "https://nexra-ai-phishing-detection-tool-5.onrender.com/predict"
 with col2:
   url = st.text_input("Enter URL to check")
  
-if st.button("🔎 Scan URL Now"):
+if st.button("🔎 Scan URL Now", key="url_btn"):
 
     if url:
 
@@ -115,7 +115,7 @@ if st.button("🔎 Scan URL Now"):
             else:
                 st.success("✅ Safe Website")
 
-            st.write(result)
+            st.json(result)
 
         except requests.exceptions.RequestException:
             st.error("API server not running")
@@ -126,6 +126,68 @@ if st.button("🔎 Scan URL Now"):
 st.write("")
 st.write("")
 
+# ---------- QR SCANNER ----------
+
+st.markdown("## 📷 Scan QR Code")
+
+QR_API_URL = "http://127.0.0.1:8000/predict_qr"
+
+col1, col2, col3 = st.columns([2,5,2])
+
+with col2:
+    uploaded_file = st.file_uploader(
+        "Upload QR Image", 
+        type=["png", "jpg", "jpeg"]
+    )
+
+    # ✅ Image preview
+    if uploaded_file is not None:
+        st.image(uploaded_file, caption="Uploaded QR", width=200)
+
+# ✅ Add key to avoid conflict
+if st.button("📷 Scan QR Now", key="qr_btn"):
+
+    if uploaded_file is not None:
+
+        try:
+            with st.spinner("Scanning QR..."):
+
+                files = {"file": uploaded_file}
+
+                response = requests.post(
+                    QR_API_URL,
+                    files=files
+                )
+                result = response.json()
+
+                # DEBUG (optional - you can remove later)
+                st.json(result)
+
+                # SAFE HANDLING
+                if "error" in result:
+                    st.error(result["error"])
+
+                elif "extracted_url" in result:
+
+                    extracted_url = result["extracted_url"]
+                    st.info(f"🔗 Extracted URL: {extracted_url}")
+
+                    if result["prediction"]["result"] == "phishing":
+                        st.error("⚠️ Phishing QR Detected")
+                    else:
+                        st.success("✅ Safe QR Code")
+
+                else:
+                    st.error("Unexpected API response")
+                    st.json(result)
+
+        except requests.exceptions.RequestException:
+            st.error("API server not responding")
+
+    else:
+        st.warning("Please upload a QR image")
+
+st.warning("⚠️ QR codes can hide malicious links. Always verify before scanning.")
 
 # ---------- FEATURES ----------
 col1, col2, col3 = st.columns(3)
