@@ -15,8 +15,8 @@ from PIL import Image
 # API URLs (Recommended: Top of file)
 # ==========================================
 
-URL_API = "https://nexra-ai-phishing-detection-tool-5.onrender.com/predict"
-QR_API = "https://nexra-ai-phishing-detection-tool-5.onrender.com/predict_qr"
+URL_API = "https://nexra-ai-phishing-detection-tool-8.onrender.com/predict"
+QR_API = "https://nexra-ai-phishing-detection-tool-8.onrender.com/predict_qr"
 
 # ==========================================
 # PAGE CONFIG
